@@ -12,7 +12,7 @@ st.title("Análisis de Préstamos - Hipótesis")
 # Cargar el dataset
 @st.cache_data
 def cargar_datos():
-    return pd.read_csv("loan_data.csv")
+    return pd.read_csv("data/loan_data.csv")
 
 df = cargar_datos()
 

@@ -8,7 +8,7 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from sklearn.datasets import load_iris
 
-df = pd.read_csv('loan_data.csv')
+df = pd.read_csv('data/loan_data.csv')
 
 #analisis exploratorio de datos
 
@@ -116,6 +116,7 @@ def crear_scatterplot_credito(df):
 
     return plt.gcf()
 
+# -----------------------------------------------------------------------
 #Boxplot para comparar estatus de prestamos para diferentes salarios
 def crear_boxplot_ingresos(df):
 
