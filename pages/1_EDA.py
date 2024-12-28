@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
-import matplot.pyplot as plt
 import matplotlib.pyplot as plt 
+import seaborn as sns
 
 from src.eda import crear_boxplot_ingresos, crear_boxplot_loan_status_vs_income, crear_countplot_defaults_vs_loan_status, crear_countplot_educacion_vs_loan_status, crear_piechart_educacion, crear_scatterplot_credit_vs_interest, crear_violinplot_credit_range_vs_interest, crear_scatterplot_interest_vs_loan_amount
 
