@@ -73,6 +73,38 @@ El análisis muestra que una proporción significativa de los préstamos superio
 Sin embargo, no alcanzan a superar el umbral del 50%, sugiriendo que otros factores también motivan estas solicitudes.
 """)
 
+if df is not None:
+    # Filtrar préstamos mayores a $10,000
+    high_loans = df[df['loan_amnt'] > 10000]
+
+    # Obtener razones únicas y clasificar "otros"
+    all_reasons = df['loan_intent'].unique()
+    other_reasons = [reason for reason in all_reasons if reason not in ['EDUCATION', 'MEDICAL']]
+
+    high_loans['loan_intent'] = high_loans['loan_intent'].apply(
+        lambda x: 'Other' if x in other_reasons else x
+    )
+
+    # Calcular porcentajes por motivo
+    reason_counts = high_loans['loan_intent'].value_counts()
+    total_high_loans = len(high_loans)
+    reason_percentages = (reason_counts / total_high_loans) * 100
+
+    # Gráfico de pastel
+    st.markdown("### Porcentaje de Préstamos > $10,000 por Motivo")
+    fig, ax = plt.subplots(figsize=(8, 6))
+    ax.pie(
+        reason_percentages,
+        labels=reason_percentages.index,
+        autopct='%1.1f%%',
+        startangle=140,
+        colors=plt.cm.Paired.colors
+    )
+    ax.set_title('Porcentaje de Préstamos > $10,000 por Motivo')
+    st.pyplot(fig)
+else:
+    st.warning("Por favor, carga un archivo de datos válido para continuar con el análisis.")
+
 df_10k = df[df["loan_amnt"] > 10000]
 motivos = df_10k["loan_intent"].value_counts()
 
