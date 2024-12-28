@@ -83,12 +83,15 @@ if prediction_file is not None and model is not None:
         
         # Crear las variables dummy para las columnas específicas
         prediction_data_dummies = pd.get_dummies(prediction_data_no_target, columns=columns_to_encode , drop_first=True)
-
+    
 
 
 
         # Validar si las columnas coinciden con las del modelo
         expected_features = model.feature_names_in_
+        prediction_data_dummies = prediction_data_dummies.reindex(columns=expected_features, fill_value=0)
+
+
         if not all(feature in prediction_data_dummies.columns for feature in expected_features):
             missing_features = set(expected_features) - set(prediction_data_dummies.columns)
             st.error(f"El archivo de predicciones no contiene las siguientes columnas esperadas: {missing_features}")

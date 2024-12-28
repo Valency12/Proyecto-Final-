@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt 
 import seaborn as sns
 
-from src.eda import crear_boxplot_ingresos, crear_boxplot_loan_status_vs_income, crear_countplot_defaults_vs_loan_status, crear_countplot_educacion_vs_loan_status, crear_piechart_educacion, crear_scatterplot_credit_vs_interest, crear_violinplot_credit_range_vs_interest, crear_scatterplot_interest_vs_loan_amount
+from src.eda import analizar_loan_status, analisis_univariados, crear_pairplot,crear_heatmap_correlacion, crear_boxplot_prestamos, crear_boxplot_puntaje_credito, crear_scatterplot_credito,  crear_boxplot_ingresos, crear_boxplot_loan_status_vs_income, crear_countplot_defaults_vs_loan_status, crear_countplot_educacion_vs_loan_status, crear_piechart_educacion, crear_scatterplot_credit_vs_interest, crear_violinplot_credit_range_vs_interest, crear_scatterplot_interest_vs_loan_amount
 
 # Carga el DataFrame
 @st.cache_data
@@ -26,95 +26,30 @@ with st.container():
 
 
 #Mostrar graficos---------------------------------------------------------------------------------------------------
+# Mostrar gráficos
+st.header("Diagrama de caja para ingresos")
+pie_status_fig= analizar_loan_status(df)
+st.pyplot(pie_status_fig)
 
-#Loan_status 
-def analizar_loan_status(df):
-    loan_status_counts = df['loan_status'].value_counts()
-    fig, ax = plt.subplots(figsize=(8, 8))
-    ax.pie(
-        loan_status_counts, 
-        labels=['Rechazado (6)', 'Aprobado (1)'], 
-        autopct='%1.1f%%', 
-        startangle=140, 
-        colors=['#66b3ff', '#ff9999']
-    )
-    ax.set_title('Distribución de Loan Status')
-    st.pyplot(fig)
+st.header("Histogramas para análisis univariado")
+histo_fig= analisis_univariados(df)
+st.pyplot(histo_fig)
 
-#Analisis univariado 
-def mostrar_histogramas(df):
-    columnas_a_incluir = [
-        'person_age', 'person_income', 'person_emp_exp', 'loan_amnt', 
-        'loan_int_rate', 'loan_percent_income', 'cb_person_cred_hist_length', 'credit_score'
-    ]
-    fig, axes = plt.subplots(nrows=4, ncols=2, figsize=(15, 15))
-    axes = axes.flatten()  
+st.header("Heatmap de correlación")
+heatmap_corr_fig= crear_heatmap_correlacion(df)
+st.pyplot(heatmap_corr_fig)
 
-    for i, col in enumerate(columnas_a_incluir):
-        df[col].hist(ax=axes[i], bins=30, alpha=0.7, color='skyblue')
-        axes[i].set_title(f'Histograma de {col}')
-        axes[i].set_xlabel(col)
-        axes[i].set_ylabel('Frecuencia')
-    plt.tight_layout()
-    st.pyplot(fig)
+st.header("Distribucion de los montos de prestamos segun la respuesta a la solicitud")
+boxplot_amnt_fig= crear_boxplot_prestamos(df)
+st.pyplot(boxplot_amnt_fig)
 
-def mostrar_pairplot(df):
-    fig = plt.figure(figsize=(15, 15))
-    sns.pairplot(data=df, kind='scatter', height=2.5, aspect=1.5)
-    plt.suptitle('Distribución de características y clases', y=1.02, fontsize=20)
-    st.pyplot(fig)
+st.header("Boxplot para diferentes puntajes crediticios segun estatus de prestamos")
+boxplot_score_fig= crear_boxplot_puntaje_credito(df)
+st.pyplot(boxplot_score_fig)
 
-#Analisis Multivariados
-
-def mostrar_pairplot_con_loan_status(df):
-    df['loan_status'] = df['loan_status'].astype('category')
-    fig = plt.figure(figsize=(15, 15))
-    sns.pairplot(df[['person_age', 'person_emp_exp', 'person_income', 'loan_amnt', 
-                     'loan_int_rate', 'loan_percent_income', 'cb_person_cred_hist_length', 
-                     'credit_score', 'loan_status']], 
-                 hue='loan_status', plot_kws={'alpha': 0.10})
-    plt.suptitle('Gráfico de Pares para Variables Numéricas', y=1.02)
-
-    st.pyplot(fig)
-
-#Matriz de correlacion 
-def crear_heatmap_correlacion(df, title='Matriz de Correlación', cmap='coolwarm', annot=True):
-    correlation_matrix = df[['person_age', 'person_emp_exp', 'person_income', 'loan_amnt', 
-                             'loan_int_rate', 'loan_percent_income', 'cb_person_cred_hist_length', 
-                             'credit_score']].corr()
-    fig, ax = plt.subplots(figsize=(10, 6)) 
-    sns.heatmap(correlation_matrix, annot=annot, cmap=cmap, ax=ax)
-    plt.title(title)
-    st.pyplot(fig)
-
-
-# Distribucion de los montos de prestamos segun la respuesta a la solicitud
-def crear_boxplot_prestamos(df):
-    plt.figure(figsize=(8, 6))
-    sns.boxplot(x='loan_status', y='loan_amnt', data=df)
-    plt.title('Distribución de los montos de préstamos según la respuesta a la solicitud')
-    plt.xlabel('Aprobación de préstamo')
-    plt.ylabel('Monto del préstamo')
-    st.pyplot(plt.gcf())
-
-#Boxplot para diferentes puntajes crediticios segun estatus de prestamos
-def crear_boxplot_puntaje_credito(df):
-    plt.figure(figsize=(8, 6))
-    sns.boxplot(x='loan_status', y='credit_score', data=df, palette="coolwarm")  
-    plt.title('Distribución de los puntajes crediticios según el estatus de préstamo')
-    plt.xlabel('Aprobación del préstamo')
-    plt.ylabel('Puntaje crediticio de la persona')
-    plt.xticks(rotation=45)  
-    st.pyplot(plt.gcf())
-
-#Grafico de relacion aprobacion de prestamos vs puntaje crediticio
-def crear_scatterplot_credito(df):
-    plt.figure(figsize=(8, 6))
-    sns.scatterplot(x='loan_status', y='credit_score', data=df, hue="loan_status", alpha=0.1, palette="deep")
-    plt.title('Relación entre aprobación de préstamos y puntaje crediticio')
-    plt.xlabel('Estado del préstamo')
-    plt.ylabel('Puntaje crediticio de la persona')
-    st.pyplot(plt.gcf())
+st.header("Grafico de relación aprobación de prestamos vs puntaje crediticio")
+scatterplot_score_fig= crear_scatterplot_credito(df)
+st.pyplot(scatterplot_score_fig)
 
 
 # Mostrar gráficos

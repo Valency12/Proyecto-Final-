@@ -31,8 +31,8 @@ def analizar_loan_status(df):
     loan_status_counts = df['loan_status'].value_counts()
     print(loan_status_counts)
 
-    plt.figure(figsize=(8, 8))
-    plt.pie(loan_status_counts, labels=['Rechazado (6)', 'Aprobado (1)'], autopct='%1.1f%%', startangle=140, colors=['#66b3ff', '#ff9999'])
+    plt.figure(figsize=(15, 15))
+    plt.pie(loan_status_counts, labels=['Rechazado (0)', 'Aprobado (1)'], autopct='%1.1f%%', startangle=140, colors=['#66b3ff', '#ff9999'])
     plt.title('Distribución de Loan Status')
     plt.show()
 
@@ -41,7 +41,7 @@ def analizar_loan_status(df):
 #graficos del analisis unvariado
 def analisis_univariados(df):
     columnas_a_incluir = ['person_age', 'person_income', 'person_emp_exp', 'loan_amnt', 'loan_int_rate', 'loan_percent_income', 'cb_person_cred_hist_length', 'credit_score']
-    fig, axes = plt.subplots(nrows=4, ncols=2, figsize=(15, 15))
+    fig, axes = plt.subplots(nrows=4, ncols=2, figsize=(12, 15))
     fig.suptitle('Histogramas de Variables Numéricas')
 
     # Iterar sobre las columnas y crear los histogramas
@@ -53,7 +53,7 @@ def analisis_univariados(df):
 
     # Ajustar el espaciado entre subplots
     plt.tight_layout()
-    df[columnas_a_incluir].hist(figsize=(15, 15))
+    df[columnas_a_incluir].hist(figsize=(4, 3))
 
     return fig 
 
@@ -76,7 +76,7 @@ def crear_heatmap_correlacion(df, title='Matriz de Correlación', cmap='coolwarm
                             'credit_score']].corr()
 
   # Crear el heatmap
-  fig, ax = plt.subplots(figsize=(10, 6)) 
+  fig, ax = plt.subplots(figsize=(10, 8)) 
   sns.heatmap(correlation_matrix, annot=annot, cmap=cmap, ax=ax)
   plt.title(title)
 
@@ -85,7 +85,7 @@ def crear_heatmap_correlacion(df, title='Matriz de Correlación', cmap='coolwarm
 #Distribucion de los montos de prestamos segun la respuesta a la solicitud
 def crear_boxplot_prestamos(df):
 
-    plt.figure(figsize=(8, 6))
+    plt.figure(figsize=(10, 8))
     sns.boxplot(x='loan_status', y='loan_amnt', data=df)
     plt.title('Distribución de los montos de préstamos según la respuesta a la solicitud')
     plt.xlabel('Aprobación de préstamo')
@@ -96,7 +96,7 @@ def crear_boxplot_prestamos(df):
 #Boxplot para diferentes puntajes crediticios segun estatus de prestamos
 def crear_boxplot_puntaje_credito(df):
 
-    plt.figure(figsize=(8, 6))
+    plt.figure(figsize=(10, 8))
     sns.boxplot(x='loan_status', y='credit_score', data=df, palette="coolwarm")  
     plt.title('Distribución de los puntajes crediticios según el estatus de préstamo')
     plt.xlabel('Aprobación del préstamo')
@@ -108,7 +108,7 @@ def crear_boxplot_puntaje_credito(df):
 #Grafico de relacion aprobacion de prestamos vs puntaje crediticio
 def crear_scatterplot_credito(df):
 
-    plt.figure(figsize=(8, 6))
+    plt.figure(figsize=(10, 8))
     sns.scatterplot(x='loan_status', y='credit_score', data=df, hue="loan_status", alpha=0.1, palette="deep")
     plt.title('Relación entre aprobación de préstamos y puntaje crediticio')
     plt.xlabel('Estado del préstamo')
@@ -120,7 +120,7 @@ def crear_scatterplot_credito(df):
 #Boxplot para comparar estatus de prestamos para diferentes salarios
 def crear_boxplot_ingresos(df):
 
-    plt.figure(figsize=(8, 6))
+    plt.figure(figsize=(10, 8))
     sns.boxplot(x='loan_status', y='person_income', data=df, palette="coolwarm")
     plt.title('Distribución de los ingresos según el estatus de préstamo')
     plt.xlabel('Aprobación del préstamo')
@@ -132,7 +132,7 @@ def crear_boxplot_ingresos(df):
 #Definiendo un rango menor en el eje y
 def crear_boxplot_loan_status_vs_income(df):
 
-    fig = plt.figure(figsize=(8, 6))
+    fig = plt.figure(figsize=(10, 8))
     sns.boxplot(x='loan_status', y='person_income', data=df)
     plt.title('Boxplot para comparar estatus de préstamos para diferentes salarios')
     plt.xlabel('Aprobación de préstamo')
@@ -143,7 +143,7 @@ def crear_boxplot_loan_status_vs_income(df):
 #Comparacion de Loan Status segun Defaults en prestamos previos
 def crear_countplot_defaults_vs_loan_status(df):
    
-    fig = plt.figure(figsize=(8, 6))
+    fig = plt.figure(figsize=(10, 8))
     sns.countplot(data=df, x='previous_loan_defaults_on_file', hue='loan_status')
     plt.title('Comparación de Loan Status según Defaults en Préstamos Previos')
     plt.xlabel('Defaults en Préstamos Previos (Yes/No)')
@@ -156,7 +156,7 @@ def crear_countplot_educacion_vs_loan_status(df):
 
     educacion_orden = ["High School", "Associate", "Bachelor", "Master", "Doctorate"]
 
-    fig = plt.figure(figsize=(8, 6))
+    fig = plt.figure(figsize=(10, 8))
     sns.countplot(data=df, x='person_education', hue='loan_status', order=educacion_orden)
     plt.title('Comparación de Loan Status según nivel de educación')
     plt.xlabel('Nivel de educación')
@@ -170,7 +170,7 @@ def crear_piechart_educacion(df):
     education_level_counts = df['person_education'].value_counts()
     educacion_orden = ["Bachelor", "Associate", "High School", "Master", "Doctorate"]
 
-    fig = plt.figure(figsize=(8, 8))
+    fig = plt.figure(figsize=(10, 8))
     plt.pie(
         education_level_counts[educacion_orden],
         labels=[f'{level} ({education_level_counts[level]})' for level in educacion_orden],
@@ -183,7 +183,7 @@ def crear_piechart_educacion(df):
 #Relación entre puntaje crediticio y tasa de interés del préstamo
 def crear_scatterplot_credit_vs_interest(df):
     
-    fig = plt.figure(figsize=(10, 6))
+    fig = plt.figure(figsize=(10, 8))
     sns.scatterplot(x='credit_score', y='loan_int_rate', data=df, alpha=0.4, hue="loan_status")
     sns.regplot(x='credit_score', y='loan_int_rate', data=df, scatter=False, color='red', line_kws={"linewidth": 2})
     plt.title('Relationship between Credit Score and Loan Interest Rate')
@@ -200,7 +200,7 @@ def crear_violinplot_credit_range_vs_interest(df):
                                       labels=['300-500', '500-600', '600-700', '700-800', '800-900'])
     
     # Crear la figura y el gráfico de violín
-    fig = plt.figure(figsize=(10, 6))
+    fig = plt.figure(figsize=(10, 8))
     sns.violinplot(x='credit_score_range', y='loan_int_rate', data=df, palette='muted')
     
     # Añadir títulos y etiquetas
@@ -212,7 +212,7 @@ def crear_violinplot_credit_range_vs_interest(df):
 #Grafico de dispersion entre trestbps y thalach
 def crear_scatterplot_interest_vs_loan_amount(df):
     
-    fig = plt.figure(figsize=(8, 6))
+    fig = plt.figure(figsize=(10, 8))
     sns.scatterplot(x='loan_int_rate', y='loan_amnt', data=df, alpha=0.45, hue='loan_status')
     plt.title('Relación entre tasa de intereses y montos de préstamos')
     plt.xlabel('Tasa de intereses')
