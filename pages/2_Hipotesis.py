@@ -44,6 +44,40 @@ plt.title("Relación préstamo/ingreso vs Estado del Préstamo")
 plt.legend()
 st.pyplot(plt)
 
+if df is not None:
+    # Filtrar datos por loan_percent_income > 0.30
+    df_mayor_relacion = df[df["loan_percent_income"] > 0.30]
+
+    # Calcular proporciones de aprobación/rechazo
+    resultados = df_mayor_relacion["loan_status"].value_counts(normalize=True) * 100
+
+    # Mostrar título y descripción
+    st.markdown("### Proporción de Resultados para `loan_percent_income > 0.30`")
+    st.markdown(
+        """
+        Este análisis muestra la proporción de solicitudes aprobadas y desaprobadas 
+        para los casos en los que el porcentaje del ingreso destinado al préstamo es mayor al 30%.
+        """
+    )
+
+    # Crear gráfico de barras
+    fig, ax = plt.subplots(figsize=(8, 6))
+    resultados.plot(kind="bar", color=["red", "green"], alpha=0.7, ax=ax)
+    ax.axhline(90, color="blue", linestyle="--", linewidth=1, label="Umbral 90%")
+    ax.set_title("Proporción de Resultados (Proporción mayor a 0.30)")
+    ax.set_ylabel("Porcentaje")
+    ax.set_xticks([0, 1])
+    ax.set_xticklabels(["Desaprobado", "Aprobado"], rotation=0)
+    ax.legend()
+    ax.grid(axis="y", linestyle="--", alpha=0.7)
+
+    # Mostrar gráfico en Streamlit
+    st.pyplot(fig)
+else:
+    st.warning("Por favor, carga un archivo de datos válido para continuar con el análisis.")
+    
+
+
 # Hipótesis 2
 st.header("Hipótesis 2")
 st.write("""
@@ -72,6 +106,38 @@ st.write("""
 El análisis muestra que una proporción significativa de los préstamos superiores a $10,000 se solicita con fines de educación o médicos. 
 Sin embargo, no alcanzan a superar el umbral del 50%, sugiriendo que otros factores también motivan estas solicitudes.
 """)
+
+if df is not None:
+    # Filtrar préstamos mayores a $10,000
+    high_loans = df[df['loan_amnt'] > 10000]
+
+    # Obtener razones únicas y clasificar "otros"
+    all_reasons = df['loan_intent'].unique()
+    other_reasons = [reason for reason in all_reasons if reason not in ['EDUCATION', 'MEDICAL']]
+
+    high_loans['loan_intent'] = high_loans['loan_intent'].apply(
+        lambda x: 'Other' if x in other_reasons else x
+    )
+
+    # Calcular porcentajes por motivo
+    reason_counts = high_loans['loan_intent'].value_counts()
+    total_high_loans = len(high_loans)
+    reason_percentages = (reason_counts / total_high_loans) * 100
+
+    # Gráfico de pastel
+    st.markdown("### Porcentaje de Préstamos > $10,000 por Motivo")
+    fig, ax = plt.subplots(figsize=(8, 6))
+    ax.pie(
+        reason_percentages,
+        labels=reason_percentages.index,
+        autopct='%1.1f%%',
+        startangle=140,
+        colors=plt.cm.Paired.colors
+    )
+    ax.set_title('Porcentaje de Préstamos > $10,000 por Motivo')
+    st.pyplot(fig)
+else:
+    st.warning("Por favor, carga un archivo de datos válido para continuar con el análisis.")
 
 df_10k = df[df["loan_amnt"] > 10000]
 motivos = df_10k["loan_intent"].value_counts()
