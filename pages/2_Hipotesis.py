@@ -44,6 +44,40 @@ plt.title("Relación préstamo/ingreso vs Estado del Préstamo")
 plt.legend()
 st.pyplot(plt)
 
+if df is not None:
+    # Filtrar datos por loan_percent_income > 0.30
+    df_mayor_relacion = df[df["loan_percent_income"] > 0.30]
+
+    # Calcular proporciones de aprobación/rechazo
+    resultados = df_mayor_relacion["loan_status"].value_counts(normalize=True) * 100
+
+    # Mostrar título y descripción
+    st.markdown("### Proporción de Resultados para `loan_percent_income > 0.30`")
+    st.markdown(
+        """
+        Este análisis muestra la proporción de solicitudes aprobadas y desaprobadas 
+        para los casos en los que el porcentaje del ingreso destinado al préstamo es mayor al 30%.
+        """
+    )
+
+    # Crear gráfico de barras
+    fig, ax = plt.subplots(figsize=(8, 6))
+    resultados.plot(kind="bar", color=["red", "green"], alpha=0.7, ax=ax)
+    ax.axhline(90, color="blue", linestyle="--", linewidth=1, label="Umbral 90%")
+    ax.set_title("Proporción de Resultados (Proporción mayor a 0.30)")
+    ax.set_ylabel("Porcentaje")
+    ax.set_xticks([0, 1])
+    ax.set_xticklabels(["Desaprobado", "Aprobado"], rotation=0)
+    ax.legend()
+    ax.grid(axis="y", linestyle="--", alpha=0.7)
+
+    # Mostrar gráfico en Streamlit
+    st.pyplot(fig)
+else:
+    st.warning("Por favor, carga un archivo de datos válido para continuar con el análisis.")
+    
+
+
 # Hipótesis 2
 st.header("Hipótesis 2")
 st.write("""
