@@ -56,3 +56,127 @@ def analisis_univariados(df):
     df[columnas_a_incluir].hist(figsize=(15, 15))
 
     return fig 
+
+#graficos del analisis multivariado
+def crear_pairplot(df, hue_column='loan_status', alpha=0.10, title='Gráfico de Pares para Variables Numéricas'):
+      numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
+      df[hue_column] = df[hue_column].astype('category')
+
+      fig = sns.pairplot(df[numeric_cols + [hue_column]], hue=hue_column, plot_kws={'alpha': alpha})
+      fig.fig.suptitle(title, y=1.02)
+
+      return fig
+
+#Matriz de correlacion
+def crear_heatmap_correlacion(df, title='Matriz de Correlación', cmap='coolwarm', annot=True):
+
+  # Calcular la matriz de correlación
+  correlation_matrix = df[['person_age', 'person_emp_exp', 'person_income', 'loan_amnt', 
+                            'loan_int_rate', 'loan_percent_income', 'cb_person_cred_hist_length', 
+                            'credit_score']].corr()
+
+  # Crear el heatmap
+  fig, ax = plt.subplots(figsize=(10, 6)) 
+  sns.heatmap(correlation_matrix, annot=annot, cmap=cmap, ax=ax)
+  plt.title(title)
+
+  return fig
+
+#Distribucion de los montos de prestamos segun la respuesta a la solicitud
+def crear_boxplot_prestamos(df):
+
+    plt.figure(figsize=(8, 6))
+    sns.boxplot(x='loan_status', y='loan_amnt', data=df)
+    plt.title('Distribución de los montos de préstamos según la respuesta a la solicitud')
+    plt.xlabel('Aprobación de préstamo')
+    plt.ylabel('Monto del préstamo')
+
+    return plt.gcf()  
+
+#Boxplot para diferentes puntajes crediticios segun estatus de prestamos
+def crear_boxplot_puntaje_credito(df):
+
+    plt.figure(figsize=(8, 6))
+    sns.boxplot(x='loan_status', y='credit_score', data=df, palette="coolwarm")  
+    plt.title('Distribución de los puntajes crediticios según el estatus de préstamo')
+    plt.xlabel('Aprobación del préstamo')
+    plt.ylabel('Puntaje crediticio de la persona')
+    plt.xticks(rotation=45)  
+
+    return plt.gcf()
+
+#Grafico de relacion aprobacion de prestamos vs puntaje crediticio
+def crear_scatterplot_credito(df):
+
+    plt.figure(figsize=(8, 6))
+    sns.scatterplot(x='loan_status', y='credit_score', data=df, hue="loan_status", alpha=0.1, palette="deep")
+    plt.title('Relación entre aprobación de préstamos y puntaje crediticio')
+    plt.xlabel('Estado del préstamo')
+    plt.ylabel('Puntaje crediticio de la persona')
+
+    return plt.gcf()
+
+#Boxplot para comparar estatus de prestamos para diferentes salarios
+def crear_boxplot_ingresos(df):
+
+    plt.figure(figsize=(8, 6))
+    sns.boxplot(x='loan_status', y='person_income', data=df, palette="coolwarm")
+    plt.title('Distribución de los ingresos según el estatus de préstamo')
+    plt.xlabel('Aprobación del préstamo')
+    plt.ylabel('Ingreso de la persona')
+    plt.xticks(rotation=45)  # Rota las etiquetas del eje x para mejor legibilidad
+
+    return plt.gcf()
+
+#Definiendo un rango menor en el eje y
+def crear_boxplot_loan_status_vs_income(df):
+
+    fig = plt.figure(figsize=(8, 6))
+    sns.boxplot(x='loan_status', y='person_income', data=df)
+    plt.title('Boxplot para comparar estatus de préstamos para diferentes salarios')
+    plt.xlabel('Aprobación de préstamo')
+    plt.ylabel('Salario de la persona')
+    plt.ylim(0, 200000)
+    return fig
+
+#Comparacion de Loan Status segun Defaults en prestamos previos
+def crear_countplot_defaults_vs_loan_status(df):
+   
+    fig = plt.figure(figsize=(8, 6))
+    sns.countplot(data=df, x='previous_loan_defaults_on_file', hue='loan_status')
+    plt.title('Comparación de Loan Status según Defaults en Préstamos Previos')
+    plt.xlabel('Defaults en Préstamos Previos (Yes/No)')
+    plt.ylabel('Cantidad')
+    plt.legend(title='Loan Status', labels=['Rechazado (0)', 'Aprobado (1)'])
+    return fig
+
+#Comparacion de Loan Status segun nivel de educacion
+def crear_countplot_educacion_vs_loan_status(df):
+
+    educacion_orden = ["High School", "Associate", "Bachelor", "Master", "Doctorate"]
+
+    fig = plt.figure(figsize=(8, 6))
+    sns.countplot(data=df, x='person_education', hue='loan_status', order=educacion_orden)
+    plt.title('Comparación de Loan Status según nivel de educación')
+    plt.xlabel('Nivel de educación')
+    plt.ylabel('Cantidad')
+    plt.legend(title='Loan Status', labels=['Rechazado (0)', 'Aprobado (1)'])
+    return fig
+
+#Distribucion para loan_status
+def crear_piechart_educacion(df):
+  
+    education_level_counts = df['person_education'].value_counts()
+    educacion_orden = ["Bachelor", "Associate", "High School", "Master", "Doctorate"]
+
+    fig = plt.figure(figsize=(8, 8))
+    plt.pie(
+        education_level_counts[educacion_orden],
+        labels=[f'{level} ({education_level_counts[level]})' for level in educacion_orden],
+        autopct='%1.1f%%', startangle=140,
+        colors=['#66b3ff', '#ff9999', '#99ff99', '#ffcc99', '#c2c2f0']
+    )
+    plt.title('Distribución de Nivel de Educación')
+    return fig
+
+    
