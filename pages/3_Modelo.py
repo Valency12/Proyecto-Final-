@@ -96,6 +96,7 @@ if prediction_file is not None and model is not None:
             # Realizar predicciones
             y_pred = model.predict(prediction_data_dummies)
 
+
             st.write("Predicciones realizadas exitosamente:")
             st.dataframe(pd.DataFrame({
                 'Predicción (Numérica)': y_pred,
@@ -117,6 +118,6 @@ if prediction_file is not None and model is not None:
                 col3.metric("Precisión", f"{precision:.2f}")
                 col4.metric("Recall", f"{recall:.2f}")
             else:
-                st.warning("El archivo no contiene una columna 'Class'. Solo se mostrarán las predicciones.")
+                st.warning("El archivo no contiene una columna 'loan_status'. Solo se mostrarán las predicciones.")
     except Exception as e:
         st.error(f"Ocurrió un error al procesar el archivo de predicción: {e}")
