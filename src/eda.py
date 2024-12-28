@@ -179,4 +179,41 @@ def crear_piechart_educacion(df):
     plt.title('Distribución de Nivel de Educación')
     return fig
 
+#Relación entre puntaje crediticio y tasa de interés del préstamo
+def crear_scatterplot_credit_vs_interest(df):
     
+    fig = plt.figure(figsize=(10, 6))
+    sns.scatterplot(x='credit_score', y='loan_int_rate', data=df, alpha=0.4, hue="loan_status")
+    sns.regplot(x='credit_score', y='loan_int_rate', data=df, scatter=False, color='red', line_kws={"linewidth": 2})
+    plt.title('Relationship between Credit Score and Loan Interest Rate')
+    plt.xlabel('Credit Score')
+    plt.ylabel('Loan Interest Rate (%)')
+    plt.grid(True)
+    return fig
+
+#Distribucion de tasas de interes por rangos de puntajes crediticios
+def crear_violinplot_credit_range_vs_interest(df):
+   
+    # Crear la nueva columna con rangos de puntajes crediticios
+    df['credit_score_range'] = pd.cut(df['credit_score'], bins=[300, 500, 600, 700, 800, 900],
+                                      labels=['300-500', '500-600', '600-700', '700-800', '800-900'])
+    
+    # Crear la figura y el gráfico de violín
+    fig = plt.figure(figsize=(10, 6))
+    sns.violinplot(x='credit_score_range', y='loan_int_rate', data=df, palette='muted')
+    
+    # Añadir títulos y etiquetas
+    plt.title('Distribución de tasas de interés por rangos de puntajes crediticios')
+    plt.xlabel('Rango de puntaje crediticio')
+    plt.ylabel('Tasa de intereses')
+    return fig
+
+#Grafico de dispersion entre trestbps y thalach
+def crear_scatterplot_interest_vs_loan_amount(df):
+    
+    fig = plt.figure(figsize=(8, 6))
+    sns.scatterplot(x='loan_int_rate', y='loan_amnt', data=df, alpha=0.45, hue='loan_status')
+    plt.title('Relación entre tasa de intereses y montos de préstamos')
+    plt.xlabel('Tasa de intereses')
+    plt.ylabel('Montos de préstamos')
+    return fig
