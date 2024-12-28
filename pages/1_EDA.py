@@ -22,6 +22,7 @@ with st.container():
         missing_values = df.isnull().any().sum()
         st.metric(label="Valores Perdidos", value="Sí" if missing_values > 0 else "No", border=True)
 
+
 # Mostrar gráficos
 st.header("Diagrama de caja para ingresos")
 boxplot_income_fig= crear_boxplot_ingresos(df)
